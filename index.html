@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Study Hub</title>
+    <meta name="description" content="الموقع اللي الدفعه هتاخد منه كل الماتريال و الملخصات و كل حاجه.">
+
+    <meta name="theme-color" content="#12141D">
+    <link rel="icon" href="images/logo.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo&family=Ubuntu:wght@300;400;700&display=swap');
+        :root {
+            --primary: #6C4DF6;
+            --primary-dark: #4D36D1;
+            --secondary: #FF7D59;
+            --dark: #12141D;
+            --darker: #0A0B10;
+            --light: #F5F7FF;
+            --gray: #2D303D;
+            --gradient: linear-gradient(135deg, var(--primary), var(--secondary));
+            --card-bg: rgba(30, 31, 41, 0.8);
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            --glass: rgba(18, 20, 29, 0.85);
+            --glass-border: #4A4A54;
+            /* GPA Calc Palette */
+            --prim-clr: #8F43EE;
+            --ff-regular: 'Ubuntu', sans-serif;
+            --fw-bold: 700;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--darker);
+            background: radial-gradient(circle at 20% 30%, rgba(108, 77, 246, 0.15) 0%, transparent 30%),
+            radial-gradient(circle at 80% 70%, rgba(255, 125, 89, 0.15) 0%, transparent 30%);
+            background-color: var(--darker);
+            background-attachment: fixed;
+            background-size: cover;
+            color: var(--light);
+            font-family: 'Cairo', sans-serif;
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        /* --- Welcome Overlay Styles --- */
+        .welcome-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(10, 11, 16, 0.5);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            opacity: 1;
+            transition: opacity 0.5s ease-out;
+        }
+
+        .welcome-overlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .welcome-message {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 700;
+            text-align: center;
+            padding: 20px;
+            animation: fadeIn 1s ease-in;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .no-scroll {
+            overflow: hidden;
+        }
+
+        .hero {
+            position: relative;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 0 20px;
+        }
+
+        .hero-content {
+            max-width: 800px;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            line-height: 1.3;
+        }
+
+        .hero p {
+            font-size: clamp(1rem, 2vw, 1.25rem);
+            margin-bottom: 2.5rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.8rem 1.8rem;
+            border-radius: 50px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: var(--transition);
+            border: none;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .btn-primary {
+            background: var(--gradient);
+            color: white;
+            box-shadow: 0 4px 15px rgba(108, 77, 246, 0.4);
+        }
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(108, 77, 246, 0.5);
+        }
+        .btn i {
+            margin-left: 8px;
+        }
+
+        .nav-toggle {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            left: auto;
+            z-index: 1000;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .sidebar {
+            position: fixed;
+            top: 0;
+            right: 0;
+            left: auto;
+            width: 300px;
+            height: 100%;
+            background: var(--glass);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-left: 1px solid var(--glass-border);
+            border-right: none;
+            z-index: 999;
+            transform: translateX(100%);
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            padding: 2rem 0;
+        }
+
+        .sidebar.open {
+            transform: translateX(0);
+        }
+        .sidebar.open ~ .nav-toggle {
+            right: calc(300px + 1rem);
+            left: auto;
+        }
+        .sidebar-header h2 {
+            font-size: 1.8rem;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-top: 1rem;
+            padding: 0 1.5rem 1.5rem;
+            text-align: center;
+        }
+        .sidebar-nav {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0 1rem;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 0.8rem 1rem;
+            margin-bottom: 0.5rem;
+            border-radius: 8px;
+            color: var(--light);
+            text-decoration: none;
+            transition: all 0.2s ease-in-out;
+        }
+        .nav-item i {
+            width: 24px;
+            text-align: center;
+            margin-left: 1rem;
+            font-size: 1.2rem;
+            color: var(--primary);
+            transition: color 0.2s ease-in-out;
+        }
+
+        .nav-item:hover {
+            background: var(--gradient);
+            color: var(--light);
+            transform: translateX(-10px);
+        }
+        .nav-item:hover i {
+            color: var(--light);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        .section {
+            padding: 5rem 0;
+            background-color: transparent;
+        }
+        .section-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        .section-header h2 {
+            font-size: 2.8rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .section-header p {
+            max-width: 600px;
+            margin: 0 auto;
+            opacity: 0.8;
+            font-size: 1.1rem;
+        }
+
+        .terms-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .term-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: var(--transition);
+            border: 1px solid var(--glass-border);
+            width: 320px;
+            text-align: center;
+        }
+        .term-card:hover {
+            transform: translateY(-10px);
+            border-color: rgba(108, 77, 246, 0.5);
+        }
+        .term-card-header {
+            padding: 2rem 1.5rem 1.5rem;
+        }
+        .term-card-header i {
+            font-size: 5rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+        .term-card-header h3 {
+            font-size: 2rem;
+            font-weight: 600;
+        }
+        .term-card-footer {
+            padding: 0 1.5rem 2rem;
+        }
+
+        footer {
+            background: var(--dark);
+            padding: 2rem 0;
+            border-top: 1px solid var(--glass-border);
+            margin-top: 5rem;
+        }
+        .footer-bottom {
+            text-align: center;
+        }
+        .footer-bottom p {
+            opacity: 0.8;
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        .floating {
+            animation: float 4s ease-in-out infinite;
+        }
+
+        /* GPA Calculator Styles */
+        .gpa-calculator-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+        .gpa-card {
+            margin: 2rem 0;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+            padding: 2rem;
+            width: 100%;
+            max-width: 600px;
+            background: var(--glass);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            text-align: center;
+            color: var(--light);
+        }
+        .gpa-card .Style {
+            display: flex;
+            flex-direction: column;
+            flex-wrap: nowrap;
+            gap: 1rem;
+            padding: .5rem;
+            width: 100%;
+            max-width: 400px;
+            margin-bottom: 1rem;
+        }
+        .gpa-card .input {
+            border-radius: 10px;
+            outline: 2px solid var(--prim-clr);
+            border: 0;
+            background-color: #e2e2e2;
+            color: #333;
+            outline-offset: 3px;
+            padding: 10px .8rem;
+            transition: 0.3s;
+            text-align: right;
+            width: 100%;
+            font-weight: normal;
+        }
+        .gpa-card .input:focus {
+            outline-offset: 5px;
+            background-color: #fff
+        }
+
+        .gpa-card button {
+            margin: 0.2rem 0.55rem;
+            padding: 0.7rem 1.5rem;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--darker);
+            background-color: var(--light);
+            border: none;
+            border-radius: 45px;
+            box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease 0s;
+            cursor: pointer;
+            outline: none;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        .gpa-card button:hover {
+            background-color: var(--prim-clr);
+            box-shadow: 0px 15px 20px #401144;
+            color: #fff;
+            transform: translateY(-3px);
+        }
+
+        .gpa-card ul {
+            list-style-type: none;
+            padding: 0;
+            width: 100%;
+        }
+
+        .gpa-card #gpa {
+            font-weight: bold;
+            font-size: 2.5rem;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-top: 0.5rem;
+        }
+        .gpa-card .courselists {
+            text-align: right;
+            margin-top: 2rem;
+            display: flex;
+            width: 100%;
+            max-width: 450px;
+        }
+
+        .gpa-card .courselists ul {
+            width: 100%;
+        }
+
+        .gpa-card .courselists li {
+            display: flex;
+            justify-content: space-between;
+            margin: 1rem 0;
+            align-items: center;
+            width: 100%;
+            padding: 0.5rem;
+            border-radius: 8px;
+            background: rgba(0,0,0,0.2);
+        }
+
+        .gpa-card .courselists button {
+            margin-right: auto;
+            margin-left: 0;
+            padding: 0.3rem 0.8rem;
+            color: white;
+            background-color: #e74c3c;
+        }
+        .gpa-card .arabic {
+            font-family: "Cairo";
+            font-weight: 500;
+            font-size: 1rem;
+            letter-spacing: normal;
+        }
+        .gpa-card h2, .gpa-card h3 {
+            color: var(--light);
+        }
+        .gpa-card .tittle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            text-align: right;
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="welcome-overlay" id="welcomeOverlay">
+    <h1 class="welcome-message">اهلا بيك في Study Hub</h1>
+</div>
+
+<div class="nav-toggle" id="navToggle">
+    <i class="fas fa-bars"></i>
+</div>
+
+<aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+        <h2>Study Hub</h2>
+    </div>
+    <nav class="sidebar-nav">
+        <a href="#home" class="nav-item">
+            <i class="fas fa-home"></i> الرئيسية
+        </a>
+        <a href="#academic-year" class="nav-item">
+            <i class="fas fa-calendar-alt"></i> السنة الدراسية
+        </a>
+        <a href="#gpa-calculator" class="nav-item">
+            <i class="fas fa-calculator"></i> حاسبة المعدل
+        </a>
+    </nav>
+</aside>
+
+<section class="hero" id="home">
+    <div class="hero-content">
+        <h1>Study Hub</h1>
+        <p>الماتريال و الملخصات و الشرح كله هنا</p>
+        <div class="cta-buttons">
+            <a href="#academic-year" class="btn btn-primary">
+                <i class="fas fa-rocket"></i> يلا بينا
+            </a>
+        </div>
+    </div>
+</section>
+
+<section class="section" id="academic-year">
+    <div class="container">
+        <div class="section-header">
+            <h2>السنة الدراسية</h2>
+            <p>اختار الترم الدراسي عشان تلاقي كل المواد بتاعته.</p>
+        </div>
+        <div class="terms-container">
+            <div class="term-card floating">
+                <div class="term-card-header">
+                    <i class="fas fa-book-open"></i>
+                    <h3>الترم الأول</h3>
+                </div>
+                <div class="term-card-footer">
+                    <a href="term_1.html" class="btn btn-primary">عرض مواد الترم الأول</a>
+                </div>
+            </div>
+            <div class="term-card floating" style="animation-delay: 0.2s;">
+                <div class="term-card-header">
+                    <i class="fas fa-book"></i>
+                    <h3>الترم الثاني</h3>
+                </div>
+                <div class="term-card-footer">
+                    <a href="term2.html" class="btn btn-primary">عرض مواد الترم الثاني</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section" id="gpa-calculator">
+    <div class="container">
+        <div class="section-header">
+            <h2>حاسبة المعدل التراكمي</h2>
+            <p>احسب معدلك التراكمي و الموقع هيفضل محتفظ بكل التقديرات اللي انت هتحطها.</p>
+        </div>
+        <div class="gpa-calculator-container">
+            <div class="gpa-card">
+                <div class="Style">
+                    <label for="courseName">
+                        <span class="tittle arabic" id="courseNaming">اسم المقرر:</span>
+                    </label>
+                    <input type="text" id="courseName" name="courseName" class="input" placeholder="اختياري" />
+                </div>
+                <div class="Style">
+                    <label class="arabic" for="grade" id="gradeLabel">
+                        <span class="arabic tittle">درجة المقرر:</span>
+                    </label>
+                    <select class="input" id="grade" name="grade" required></select>
+                </div>
+                <button class="arabic" type="button" style="font-weight: var(--fw-bold); margin-top: 1rem;" onclick="addCourse()" id="addCourseLabel">
+                    أضف المادة
+                </button>
+                <h3 id="gpaLabel" class="arabic" style="margin-top:1.5rem;">
+                    <span class="arabic tittle">معدلك التراكمي:</span>
+                    <h2 id="gpa">0.00</h2>
+                </h3>
+                <div class="courselists arabic">
+                    <ul id="courseList"></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<footer>
+    <div class="container">
+        <div class="footer-bottom">
+            <p>&copy; 2025 HANY. جميع الحقوق محفوظة.</p>
+        </div>
+    </div>
+</footer>
+
+<script>
+    // Welcome message script
+    window.addEventListener('load', () => {
+        const welcomeOverlay = document.getElementById('welcomeOverlay');
+        setTimeout(() => {
+            welcomeOverlay.classList.add('hidden');
+        }, 2000);
+    });
+
+    // Sidebar script
+    const navToggle = document.getElementById('navToggle');
+    const sidebar = document.getElementById('sidebar');
+    const body = document.body;
+
+    navToggle.addEventListener('click', (e) => {
+        e.stopPropagation();
+        sidebar.classList.toggle('open');
+        body.classList.toggle('no-scroll');
+    });
+
+    document.addEventListener('click', (e) => {
+        if (sidebar.classList.contains('open') && !sidebar.contains(e.target) && !navToggle.contains(e.target)) {
+            sidebar.classList.remove('open');
+            body.classList.remove('no-scroll');
+        }
+    });
+
+    // Smooth scroll for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const targetId = this.getAttribute('href');
+            const targetElement = document.querySelector(targetId);
+            if (targetElement) {
+                window.scrollTo({
+                    top: targetElement.offsetTop,
+                    behavior: 'smooth'
+                });
+                if (sidebar.classList.contains('open')) {
+                    sidebar.classList.remove('open');
+                    body.classList.remove('no-scroll');
+                }
+            }
+        });
+    });
+
+    // GPA Calculator Script
+    let courses = [];
+    const gradingSystem = "old"; // System is fixed to 'old'
+
+    function updateGradeOptions() {
+        const gradeSelect = document.getElementById("grade");
+        gradeSelect.innerHTML = "";
+        const grades = ["A+", "A", "B+", "B", "C+", "C", "D+", "D", "F"];
+
+        for (const grade of grades) {
+            const option = document.createElement("option");
+            option.value = grade;
+            option.textContent = grade;
+            gradeSelect.appendChild(option);
+        }
+
+        // Reset styles to default
+        gradeSelect.style.backgroundColor = '';
+        gradeSelect.style.color = '';
+        gradeSelect.style.borderColor = '';
+    }
+
+    if (localStorage.getItem("courses")) {
+        courses = JSON.parse(localStorage.getItem("courses"));
+    }
+
+    function addCourse() {
+        const gradeSelect = document.getElementById("grade");
+        const courseNameInput = document.getElementById("courseName");
+        const credit = 3;
+        const grade = gradeSelect.value;
+        const courseName = courseNameInput.value || "مادة غير مسماة";
+
+        courses.push({ courseName, grade, credit });
+        saveCourses();
+        displayCourses();
+        calculateGPA();
+        courseNameInput.value = "";
+        gradeSelect.selectedIndex = 0;
+    }
+
+    function removeCourse(index) {
+        courses.splice(index, 1);
+        saveCourses();
+        displayCourses();
+        calculateGPA();
+    }
+
+    function saveCourses() {
+        localStorage.setItem("courses", JSON.stringify(courses));
+    }
+
+    function displayCourses() {
+        const courseList = document.getElementById("courseList");
+        courseList.innerHTML = "";
+        const removeLabel = "إزالة";
+
+        for (let i = 0; i < courses.length; i++) {
+            const course = courses[i];
+            const { courseName, grade, credit } = course;
+
+            const listItem = document.createElement("li");
+            listItem.textContent = `${courseName}: ${grade} (${credit} ساعات)`;
+
+            const removeButton = document.createElement("button");
+            removeButton.classList.add("removeButton");
+            removeButton.textContent = removeLabel;
+            removeButton.onclick = function() { removeCourse(i); };
+
+            listItem.prepend(removeButton);
+            courseList.appendChild(listItem);
+        }
+    }
+
+    function calculateGPA() {
+        let totalCredits = 0;
+        let totalGradePoints = 0;
+        for (const course of courses) {
+            const { grade, credit } = course;
+            const gradePoints = getGradePoints(grade);
+            totalCredits += credit;
+            totalGradePoints += gradePoints * credit;
+        }
+        const gpa = totalCredits === 0 ? "0.00" : (totalGradePoints / totalCredits).toFixed(2);
+        document.querySelector("#gpa").textContent = gpa;
+    }
+
+    function getGradePoints(grade) {
+        const points = { "A+": 4.0, "A": 3.75, "B+": 3.4, "B": 3.0, "C+": 2.75, "C": 2.5, "D+": 2.25, "D": 2.0, "F": 0.0 };
+        return points[grade] || 0.0;
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        updateGradeOptions();
+        displayCourses();
+        calculateGPA();
+    });
+</script>
+</body>
+</html>
